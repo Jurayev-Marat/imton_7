@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tajribalar Ro'yxati</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .experience-item {
+            border-left: 4px solid #0d6efd;
+            padding-left: 20px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        .experience-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .education-item {
+            border-color: #198754;
+            background: #f0fff4;
+        }
+        .summary-item {
+            border-color: #6c757d;
+            background: #f8f9fa;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-weight: 700;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            position: relative;
+        }
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #0d6efd, #198754);
+        }
+        .company-name {
+            color: #495057;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .date-badge {
+            background: linear-gradient(135deg, #6f42c1, #0d6efd);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .current-badge {
+            background: linear-gradient(135deg, #198754, #20c997);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #6c757d;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        .action-buttons {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+        .action-buttons .btn {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .action-buttons .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+        .description-text {
+            line-height: 1.8;
+            color: #444;
+            font-size: 1.05rem;
+        }
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+        }
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .admin-back-btn {
+            background: linear-gradient(135deg, #6f42c1, #9c27b0);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .admin-back-btn:hover {
+            background: linear-gradient(135deg, #5a32a3, #7b1fa2);
+            color: white;
+            transform: translateX(-5px);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="mb-1">
+                        <i class="fas fa-briefcase me-2"></i>Mening Tajribalarim
+                    </h1>
+                    <p class="mb-0 opacity-75">Professional rivojlanishim va ta'lim yo'lim</p>
+                </div>
+                <a href="{% url 'admin_panel' %}" class="admin-back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Admin Panelga Qaytish
+                </a>
+            </div>
+        </div>
+
+        <!-- Ish Tajribasi -->
+        {% if work_experiences %}
+        <div class="mb-5">
+            <h3 class="section-title">
+                <i class="fas fa-briefcase me-2"></i>Ish Tajribasi
+                <span class="badge bg-primary ms-2">{{ work_experiences|length }}</span>
+            </h3>
+            {% for exp in work_experiences %}
+            <div class="experience-item mb-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h4 class="mb-1" style="color: #2c3e50;">{{ exp.title }}</h4>
+                        {% if exp.company %}
+                        <p class="company-name mb-2">
+                            <i class="fas fa-building me-2"></i>{{ exp.company }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    <span class="date-badge">
+                        <i class="far fa-calendar me-1"></i>
+                        {{ exp.start_date|date:"F Y" }} -
+                        {% if exp.current %}
+                            <span class="current-badge ms-1">Hozirgacha</span>
+                        {% else %}
+                            {{ exp.end_date|date:"F Y" }}
+                        {% endif %}
+                    </span>
+                </div>
+                {% if exp.description %}
+                <div class="description-text">
+                    {{ exp.description|linebreaks }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state mb-5">
+            <i class="fas fa-briefcase"></i>
+            <h5>Ish Tajribasi Mavjud Emas</h5>
+            <p>Hozircha ish tajribalari qo'shilmagan</p>
+        </div>
+        {% endif %}
+
+        <!-- Ta'lim -->
+        {% if education_experiences %}
+        <div class="mb-5">
+            <h3 class="section-title">
+                <i class="fas fa-graduation-cap me-2"></i>Ta'lim
+                <span class="badge bg-success ms-2">{{ education_experiences|length }}</span>
+            </h3>
+            {% for exp in education_experiences %}
+            <div class="experience-item education-item mb-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h4 class="mb-1" style="color: #198754;">{{ exp.title }}</h4>
+                        {% if exp.company %}
+                        <p class="company-name mb-2">
+                            <i class="fas fa-university me-2"></i>{{ exp.company }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    <span class="date-badge" style="background: linear-gradient(135deg, #198754, #20c997);">
+                        <i class="far fa-calendar me-1"></i>
+                        {{ exp.start_date|date:"F Y" }} -
+                        {% if exp.current %}
+                            <span class="current-badge ms-1">Hozirgacha</span>
+                        {% else %}
+                            {{ exp.end_date|date:"F Y" }}
+                        {% endif %}
+                    </span>
+                </div>
+                {% if exp.description %}
+                <div class="description-text">
+                    {{ exp.description|linebreaks }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state mb-5">
+            <i class="fas fa-graduation-cap"></i>
+            <h5>Ta'lim Ma'lumotlari Mavjud Emas</h5>
+            <p>Hozircha ta'lim ma'lumotlari qo'shilmagan</p>
+        </div>
+        {% endif %}
+
+        <!-- Qisqacha ma'lumot -->
+        {% if summary_experiences %}
+        <div class="mb-5">
+            <h3 class="section-title">
+                <i class="fas fa-info-circle me-2"></i>Qisqacha Ma'lumot
+                <span class="badge bg-secondary ms-2">{{ summary_experiences|length }}</span>
+            </h3>
+            {% for exp in summary_experiences %}
+            <div class="experience-item summary-item mb-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h4 class="mb-0" style="color: #6c757d;">{{ exp.title }}</h4>
+                    <span class="date-badge" style="background: linear-gradient(135deg, #6c757d, #adb5bd);">
+                        <i class="far fa-calendar me-1"></i>
+                        {{ exp.start_date|date:"F Y" }} -
+                        {% if exp.current %}
+                            <span class="current-badge ms-1">Hozirgacha</span>
+                        {% else %}
+                            {{ exp.end_date|date:"F Y" }}
+                        {% endif %}
+                    </span>
+                </div>
+                {% if exp.description %}
+                <div class="description-text">
+                    {{ exp.description|linebreaks }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state mb-5">
+            <i class="fas fa-info-circle"></i>
+            <h5>Qisqacha Ma'lumot Mavjud Emas</h5>
+            <p>Hozircha qisqacha ma'lumotlar qo'shilmagan</p>
+        </div>
+        {% endif %}
+
+        <!-- Action Buttons (Fixed) -->
+        <div class="action-buttons">
+            <a href="{% url 'edit_experiences' %}" class="btn btn-primary btn-lg rounded-pill">
+                <i class="fas fa-edit me-2"></i>Tajribalarni Tahrirlash
+            </a>
+        </div>
+
+        <!-- Additional Navigation -->
+        <div class="mt-5 pt-4 border-top">
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'admin_panel' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Admin Panelga Qaytish
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Footer -->
+        <div class="mt-4 text-center text-muted">
+            <small>
+                <i class="fas fa-chart-bar me-1"></i>
+                Jami: {{ all_experiences|default:"0" }} ta tajriba |
+                <i class="fas fa-briefcase me-1 ms-3"></i>
+                Ish: {{ work_experiences|length }} |
+                <i class="fas fa-graduation-cap me-1 ms-3"></i>
+                Ta'lim: {{ education_experiences|length }} |
+                <i class="fas fa-info-circle me-1 ms-3"></i>
+                Ma'lumot: {{ summary_experiences|length }}
+            </small>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Smooth scroll animation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Print button functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const printBtn = document.querySelector('[onclick*="print"]');
+            if (printBtn) {
+                printBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.print();
+                });
+            }
+        });
+
+        // Add animation to cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Apply animation to all experience items
+        document.querySelectorAll('.experience-item').forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(item);
+        });
+    </script>
+</body>
+</html>

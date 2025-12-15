@@ -1,0 +1,216 @@
+<!-- templates/edit_home_about.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home & About tahrirlash</title>
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <!-- Soddalashtirilgan navbar -->
+    <nav class="navbar bg-dark navbar-dark">
+        <div class="container">
+            <span class="navbar-brand">Admin Panel</span>
+            <div>
+                <a href="{% url 'admin_panel' %}" class="btn btn-sm btn-outline-light">Orqaga</a>
+                <a href="{% url 'home' %}" class="btn btn-sm btn-outline-light ms-2">Saytga</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+
+        <!-- Xabarlar -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Sarlavha -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="mb-0"><i class="bi bi-person-fill-gear"></i> Home & About ma'lumotlari</h3>
+                <p class="text-muted mb-0">Barcha maydonlarni to'ldirish majburiy emas</p>
+            </div>
+        </div>
+
+        <!-- Asosiy forma -->
+        <form method="POST" enctype="multipart/form-data" class="bg-white p-4 rounded shadow-sm">
+            {% csrf_token %}
+
+            <!-- Shaxsiy ma'lumotlar -->
+            <h5 class="border-bottom pb-2 mb-3">Shaxsiy ma'lumotlar</h5>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">To'liq ism</label>
+                    {{ form.full_name }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Lavozim</label>
+                    {{ form.title }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Telefon</label>
+                    {{ form.phone }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Email</label>
+                    {{ form.email }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Shahar</label>
+                    {{ form.city }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Tug'ilgan sana</label>
+                    {{ form.birth_date }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Yosh</label>
+                    {{ form.age }}
+                </div>
+            </div>
+
+            <!-- Bio ma'lumotlari -->
+            <h5 class="border-bottom pb-2 mb-3 mt-4">Bio ma'lumotlari</h5>
+            <div class="mb-3">
+                <label class="form-label">Qisqacha ma'lumot</label>
+                {{ form.short_bio }}
+                <div class="form-text">255 belgidan oshmasin</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Batafsil ma'lumot</label>
+                {{ form.detailed_bio }}
+            </div>
+
+            <!-- Fayllar -->
+            <h5 class="border-bottom pb-2 mb-3 mt-4">Fayllar</h5>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Profil rasmi</label>
+                    {% if profile.profile_image %}
+                        <div class="mb-2">
+                            <img src="{{ profile.profile_image.url }}" class="img-thumbnail" width="100">
+                        </div>
+                    {% endif %}
+                    <input type="file" name="profile_image" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Hero fon rasm</label>
+                    {% if profile.hero_background %}
+                        <div class="mb-2">
+                            <img src="{{ profile.hero_background.url }}" class="img-thumbnail" width="100">
+                        </div>
+                    {% endif %}
+                    <input type="file" name="hero_background" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Rezyume fayli</label>
+                    {% if profile.resume_file %}
+                        <div class="mb-2">
+                            <a href="{{ profile.resume_file.url }}" class="text-decoration-none">
+                                <i class="bi bi-file-pdf"></i> Yuklab olish
+                            </a>
+                        </div>
+                    {% endif %}
+                    <input type="file" name="resume_file" class="form-control" accept=".pdf">
+                </div>
+            </div>
+
+            <!-- Ijtimoiy tarmoqlar -->
+            <h5 class="border-bottom pb-2 mb-3 mt-4">Ijtimoiy tarmoqlar</h5>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">LinkedIn</label>
+                    {{ form.linkedin }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">GitHub</label>
+                    {{ form.github }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">LeetCode</label>
+                    {{ form.leetcode }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Gmail</label>
+                    {{ form.gmail }}
+                </div>
+            </div>
+
+            <!-- Hero qismi -->
+            <h5 class="border-bottom pb-2 mb-3 mt-4">Hero qismi (Bosh sahifa)</h5>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Hero sarlavha</label>
+                    {{ form.hero_title }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Kasblar ro'yxati</label>
+                    {{ form.hero_subtitles }}
+                    <div class="form-text">Har bir kasbni vergul bilan ajrating</div>
+                </div>
+            </div>
+
+            <!-- Qo'shimcha ma'lumotlar -->
+            <h5 class="border-bottom pb-2 mb-3 mt-4">Qo'shimcha ma'lumotlar</h5>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Veb sayt</label>
+                    {{ form.website }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Daraja</label>
+                    {{ form.degree }}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="form-check form-switch mt-4">
+                        {{ form.freelance_available }}
+                        <label class="form-check-label">Freelance mavjud</label>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="form-check form-switch mt-4">
+                        {{ form.is_active }}
+                        <label class="form-check-label">Profil faol</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tugmalar -->
+            <div class="mt-4 pt-3 border-top">
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'admin_panel' %}" class="btn btn-secondary">Bekor qilish</a>
+                    <button type="submit" class="btn btn-primary">Saqlash</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Soddalashtirilgan JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Barcha input, select va textarea larga form-control klassi qo'shish
+            document.querySelectorAll('input:not([type="checkbox"]), select, textarea').forEach(function(el) {
+                el.classList.add('form-control');
+            });
+
+            // Checkbox lar uchun
+            document.querySelectorAll('input[type="checkbox"]').forEach(function(el) {
+                el.classList.add('form-check-input');
+            });
+        });
+    </script>
+</body>
+</html>

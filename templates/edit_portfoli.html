@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Portfolio Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .section {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            background: #fff;
+        }
+        .section-title {
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: #0d6efd;
+        }
+        .portfolio-item {
+            transition: all 0.3s;
+        }
+        .portfolio-item:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+        }
+        .badge-category {
+            background-color: #6f42c1;
+            color: white;
+        }
+        .badge-featured {
+            background-color: #20c997;
+            color: white;
+        }
+        .tech-badge {
+            background-color: #17a2b8;
+            color: white;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .action-buttons {
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        .portfolio-item:hover .action-buttons {
+            opacity: 1;
+        }
+
+        /* Orqaga tugmasi uchun style */
+        .back-button-container {
+            margin-bottom: 20px;
+        }
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        .btn-back:hover {
+            background-color: #5a6268;
+            color: white;
+            transform: translateX(-3px);
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid py-4">
+
+    <!-- ORQAGA TUGMASI -->
+    <div class="back-button-container">
+        <a href="{% url 'admin_panel' %}" class="btn-back">
+            ← Orqaga
+        </a>
+    </div>
+
+    <h1 class="text-center mb-4"> Portfolio Boshqaruv Paneli</h1>
+
+    <!-- KATEGORIYALAR BO'LIMI -->
+    <div class="section">
+        <h2 class="section-title">📂 Kategoriyalar</h2>
+
+        <!-- Kategoriya qo'shish formasi -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                {% if edit_category_id %}
+                    ✏️ Kategoriyani Tahrirlash
+                {% else %}
+                    ➕ Yangi Kategoriya
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <form method="post" class="row g-3">
+                    {% csrf_token %}
+                    <div class="col-md-4">
+                        <label class="form-label">Nomi</label>
+                        {{ category_form.name }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Filter Nomi</label>
+                        {{ category_form.filter_name }}
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Tartib</label>
+                        {{ category_form.order }}
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        {% if edit_category_id %}
+                            <input type="hidden" name="edit_category_id" value="{{ edit_category_id }}">
+                            <button type="submit" name="edit_category" class="btn btn-warning me-2">
+                                ✏️ Saqlash
+                            </button>
+                            <a href="{% url 'edit_portfoli' %}" class="btn btn-secondary">❌ Bekor</a>
+                        {% else %}
+                            <button type="submit" name="add_category" class="btn btn-success">
+                                ➕ Qo'shish
+                            </button>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Kategoriyalar ro'yxati -->
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nomi</th>
+                        <th>Filter</th>
+                        <th>Tartib</th>
+                        <th>Elementlar</th>
+                        <th>Harakatlar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in categories %}
+                    <tr>
+                        <td><strong>#{{ category.id }}</strong></td>
+                        <td>{{ category.name }}</td>
+                        <td><code class="bg-light p-1 rounded">{{ category.filter_name }}</code></td>
+                        <td>{{ category.order }}</td>
+                        <td>
+                            <span class="badge bg-info">{{ category.items.count }}</span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="?get_edit_category=1&edit_category_id={{ category.id }}"
+                                   class="btn btn-warning">Tahrir</a>
+                                <form method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="delete_category_id" value="{{ category.id }}">
+                                    <button type="submit" name="delete_category"
+                                            class="btn btn-danger"
+                                            onclick="return confirm('Haqiqatan ham oʻchirmoqchimisiz?')">
+                                        O'chir
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">
+                            Kategoriyalar topilmadi. Yangi kategoriya qo'shing.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- PORTFOLIO ELEMENTLARI BO'LIMI -->
+    <div class="section">
+        <h2 class="section-title">🖼️ Portfolio Elementlari</h2>
+
+        <!-- Portfolio qo'shish formasi -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                {% if edit_portfolio_id %}
+                    ✏️ Portfolioni Tahrirlash
+                {% else %}
+                    ➕ Yangi Portfolio
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" class="row g-3">
+                    {% csrf_token %}
+                    <div class="col-md-3">
+                        <label class="form-label">Kategoriya</label>
+                        {{ portfolio_form.category }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Sarlavha</label>
+                        {{ portfolio_form.title }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Tartib</label>
+                        {{ portfolio_form.order }}
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-check mt-4">
+                            {{ portfolio_form.is_featured }}
+                            <label class="form-check-label">Tanlangan</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Qisqacha tavsif</label>
+                        {{ portfolio_form.short_description }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Texnologiyalar</label>
+                        {{ portfolio_form.technologies_used }}
+                        <small class="text-muted">Vergul bilan ajrating</small>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Batafsil tavsif</label>
+                        {{ portfolio_form.detailed_description }}
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">GitHub Havolasi</label>
+                        {{ portfolio_form.github_link }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Live Demo Havolasi</label>
+                        {{ portfolio_form.live_demo_link }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Rasm</label>
+                        {{ portfolio_form.image }}
+                    </div>
+
+                    <div class="col-12">
+                        <div class="d-flex justify-content-end">
+                            {% if edit_portfolio_id %}
+                                <input type="hidden" name="edit_portfolio_id" value="{{ edit_portfolio_id }}">
+                                <button type="submit" name="edit_portfolio" class="btn btn-warning me-2">
+                                    ✏️ Saqlash
+                                </button>
+                                <a href="{% url 'edit_portfoli' %}" class="btn btn-secondary">❌ Bekor</a>
+                            {% else %}
+                                <button type="submit" name="add_portfolio" class="btn btn-success">
+                                    ➕ Portfolio Qo'shish
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Portfolio elementlari ro'yxati -->
+        <div class="row">
+            {% for portfolio in portfolios %}
+            <div class="col-md-6 mb-4">
+                <div class="card portfolio-item h-100">
+                    <div class="row g-0 h-100">
+                        <!-- Rasm qismi -->
+                        <div class="col-md-4">
+                            {% if portfolio.image %}
+                                <img src="{{ portfolio.image.url }}"
+                                     class="img-fluid rounded-start h-100"
+                                     alt="{{ portfolio.title }}"
+                                     style="object-fit: cover;">
+                            {% else %}
+                                <div class="h-100 d-flex align-items-center justify-content-center bg-light">
+                                    <span class="text-muted">Rasm yo'q</span>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Ma'lumotlar qismi -->
+                        <div class="col-md-8">
+                            <div class="card-body h-100 d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title">{{ portfolio.title }}</h5>
+                                    <div class="action-buttons">
+                                        <a href="?get_edit_portfolio=1&edit_portfolio_id={{ portfolio.id }}"
+                                           class="btn btn-sm btn-warning">✏️</a>
+                                        <form method="post" style="display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="delete_portfolio_id" value="{{ portfolio.id }}">
+                                            <button type="submit" name="delete_portfolio"
+                                                    class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Haqiqatan ham oʻchirmoqchimisiz?')">
+                                                🗑️
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <div class="mb-2">
+                                    <span class="badge badge-category">{{ portfolio.category.name }}</span>
+                                    {% if portfolio.is_featured %}
+                                        <span class="badge badge-featured">⭐ Tanlangan</span>
+                                    {% endif %}
+                                </div>
+
+                                <p class="card-text flex-grow-1">{{ portfolio.short_description }}</p>
+
+                                <div class="mt-2">
+                                    {% for tech in portfolio.get_technologies_list %}
+                                        <span class="badge tech-badge">{{ tech }}</span>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="mt-3">
+                                    <small class="text-muted">
+                                        Sana: {{ portfolio.date_created|date:"d.m.Y" }}
+                                    </small>
+                                    <div class="mt-2">
+                                        {% if portfolio.github_link %}
+                                            <a href="{{ portfolio.github_link }}"
+                                               target="_blank"
+                                               class="btn btn-sm btn-outline-dark">
+                                                GitHub
+                                            </a>
+                                        {% endif %}
+                                        {% if portfolio.live_demo_link %}
+                                            <a href="{{ portfolio.live_demo_link }}"
+                                               target="_blank"
+                                               class="btn btn-sm btn-outline-primary">
+                                                Live Demo
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    Portfolio elementlari topilmadi. Yangi portfolio qo'shing.
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Formani tozalash
+document.addEventListener('DOMContentLoaded', function() {
+    // URL dan GET parametrlarini tekshirish
+    const urlParams = new URLSearchParams(window.location.search);
+    if (!urlParams.has('get_edit_category') && !urlParams.has('get_edit_portfolio')) {
+        // Formalar qiymatlarini tozalash
+        document.querySelectorAll('input, select, textarea').forEach(input => {
+            if (!input.name.includes('edit_') && !input.name.includes('delete_')) {
+                if (input.type === 'text' || input.type === 'number' || input.type === 'url') {
+                    input.value = '';
+                }
+            }
+        });
+    }
+});
+</script>
+</body>
+</html>

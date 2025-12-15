@@ -1,0 +1,763 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Admin - Kirish</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --uz-blue: #1EB53A;       /* O'zbekiston ko'k rangi */
+      --uz-green: #0099B5;      /* O'zbekiston yashil rangi */
+      --uz-red: #CE1126;        /* O'zbekiston qizil rangi */
+      --uz-white: #FFFFFF;      /* Oq rang */
+      --uz-light-blue: #5BC0EB; /* Och ko'k */
+      --uz-gray: #F8F9FA;       /* Kulrang */
+    }
+
+    body {
+      background: linear-gradient(135deg, #1EB53A 0%, #0099B5 50%, #FFFFFF 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* O'zbekiston Bayrog'i Fon Elementlari */
+    .flag-element {
+      position: absolute;
+      opacity: 0.1;
+      z-index: 1;
+    }
+
+    .flag-blue {
+      background: var(--uz-blue);
+    }
+
+    .flag-white {
+      background: var(--uz-white);
+    }
+
+    .flag-green {
+      background: var(--uz-green);
+    }
+
+    .flag-red {
+      background: var(--uz-red);
+    }
+
+    /* Bayroq naqshlari - chiziqlar */
+    .flag-stripe {
+      position: absolute;
+      width: 100%;
+      height: 33.33vh;
+      left: 0;
+    }
+
+    .stripe-1 {
+      top: 0;
+      background: var(--uz-blue);
+      opacity: 0.15;
+    }
+
+    .stripe-2 {
+      top: 33.33vh;
+      background: var(--uz-white);
+      opacity: 0.1;
+    }
+
+    .stripe-3 {
+      top: 66.66vh;
+      background: var(--uz-green);
+      opacity: 0.15;
+    }
+
+    /* Hilol va Yulduz Dekoratsiyasi */
+    .crescent {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 15px solid transparent;
+      border-top: 15px solid rgba(206, 17, 38, 0.2);
+      border-right: 15px solid rgba(206, 17, 38, 0.2);
+      transform: rotate(-45deg);
+      top: 15%;
+      right: 10%;
+      animation: rotateCrescent 20s linear infinite;
+    }
+
+    .star {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: rgba(206, 17, 38, 0.2);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      animation: twinkle 3s infinite alternate;
+    }
+
+    .star:nth-child(1) { top: 20%; left: 15%; animation-delay: 0s; }
+    .star:nth-child(2) { top: 40%; right: 20%; animation-delay: 0.5s; }
+    .star:nth-child(3) { bottom: 30%; left: 25%; animation-delay: 1s; }
+    .star:nth-child(4) { bottom: 20%; right: 15%; animation-delay: 1.5s; }
+    .star:nth-child(5) { top: 60%; left: 10%; animation-delay: 2s; }
+
+    @keyframes rotateCrescent {
+      from { transform: rotate(-45deg); }
+      to { transform: rotate(315deg); }
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.2; transform: scale(1); }
+      100% { opacity: 0.4; transform: scale(1.1); }
+    }
+
+    /* Asosiy Login Kartasi */
+    .login-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 50px 40px;
+      width: 450px;
+      box-shadow:
+        0 20px 40px rgba(30, 181, 58, 0.2),
+        0 10px 20px rgba(0, 0, 0, 0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+      position: relative;
+      z-index: 10;
+      border: 2px solid var(--uz-white);
+      transition: transform 0.3s ease;
+    }
+
+    .login-card:hover {
+      transform: translateY(-5px);
+      box-shadow:
+        0 30px 60px rgba(30, 181, 58, 0.3),
+        0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Sarlavha Qismi */
+    .login-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .flag-icon {
+      width: 80px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--uz-blue) 33.33%, var(--uz-white) 33.33% 66.66%, var(--uz-green) 66.66%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(30, 181, 58, 0.3);
+      border: 2px solid var(--uz-white);
+    }
+
+    .flag-icon::before {
+      content: '';
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: transparent;
+      border: 8px solid var(--uz-red);
+      border-radius: 50%;
+      border-top-color: transparent;
+      border-right-color: transparent;
+      transform: rotate(-45deg);
+      opacity: 0.8;
+    }
+
+    .flag-icon::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: var(--uz-red);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .logo-text h1 {
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--uz-blue), var(--uz-green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+    }
+
+    .logo-text p {
+      color: #555;
+      font-size: 15px;
+      margin: 8px 0 0 0;
+      font-weight: 500;
+    }
+
+    /* Forma Stili */
+    .form-group {
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--uz-blue);
+      font-weight: 600;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .form-label i {
+      color: var(--uz-blue);
+      font-size: 16px;
+    }
+
+    .form-control {
+      padding: 16px 20px 16px 50px;
+      border: 2px solid #E8F5E9;
+      border-radius: 12px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background-color: #F8FDF9;
+      font-weight: 500;
+      color: #1B5E20;
+    }
+
+    .form-control:focus {
+      border-color: var(--uz-green);
+      box-shadow: 0 0 0 3px rgba(0, 153, 181, 0.15);
+      background-color: white;
+      outline: none;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 20px;
+      top: 53px;
+      color: var(--uz-blue);
+      font-size: 18px;
+      transition: color 0.3s ease;
+    }
+
+    .form-control:focus + .input-icon {
+      color: var(--uz-green);
+    }
+
+    /* Parol Ko'rish Tugmasi */
+    .password-toggle {
+      position: absolute;
+      right: 20px;
+      top: 53px;
+      background: none;
+      border: none;
+      color: var(--uz-blue);
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 18px;
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    .password-toggle:hover {
+      background-color: rgba(30, 181, 58, 0.1);
+      color: var(--uz-green);
+    }
+
+    /* Kirish Tugmasi */
+    .submit-btn {
+      background: linear-gradient(135deg, var(--uz-blue), var(--uz-green));
+      color: white;
+      border: none;
+      padding: 18px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      width: 100%;
+      transition: all 0.3s ease;
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(30, 181, 58, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .submit-btn:hover {
+      background: linear-gradient(135deg, #1B9E3E, #0088A3);
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(30, 181, 58, 0.4);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Asosiy Sahifaga Qaytish Tugmasi */
+    .home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
+      background: white;
+      color: var(--uz-blue);
+      border: 2px solid var(--uz-blue);
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+      width: 100%;
+      justify-content: center;
+      box-shadow: 0 5px 15px rgba(30, 181, 58, 0.1);
+    }
+
+    .home-btn:hover {
+      background: linear-gradient(135deg, var(--uz-blue), var(--uz-green));
+      color: white;
+      border-color: transparent;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(30, 181, 58, 0.2);
+    }
+
+    /* Xabarlar/Uyqotishlar */
+    .alert-container {
+      margin-bottom: 25px;
+    }
+
+    .alert {
+      border-radius: 12px;
+      border: none;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideIn 0.4s ease-out;
+      font-weight: 500;
+      background-color: #F1F8E9;
+      border-left: 4px solid;
+    }
+
+    .alert-success {
+      border-left-color: var(--uz-green);
+      background-color: #E8F5E9;
+      color: var(--uz-green);
+    }
+
+    .alert-danger {
+      border-left-color: var(--uz-red);
+      background-color: #FFEBEE;
+      color: #C62828;
+    }
+
+    .alert-warning {
+      border-left-color: #FF9800;
+      background-color: #FFF3E0;
+      color: #EF6C00;
+    }
+
+    .alert-info {
+      border-left-color: var(--uz-blue);
+      background-color: #E3F2FD;
+      color: var(--uz-blue);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* O'zbekiston Emblema */
+    .uzbek-emblem {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(30, 181, 58, 0.1), rgba(0, 153, 181, 0.1));
+      border: 1px solid rgba(30, 181, 58, 0.2);
+      color: var(--uz-blue);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .uzbek-emblem img {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* Footer */
+    .login-footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #E8F5E9;
+      color: #555;
+      font-size: 14px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 15px;
+    }
+
+    .footer-links a {
+      color: var(--uz-blue);
+      text-decoration: none;
+      transition: all 0.3s;
+      font-size: 14px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-links a:hover {
+      color: white;
+      background: linear-gradient(135deg, var(--uz-blue), var(--uz-green));
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .login-card {
+        width: 90%;
+        padding: 40px 25px;
+        margin: 20px;
+      }
+
+      .logo-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+      }
+
+      .logo-text h1 {
+        font-size: 28px;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .crescent {
+        width: 80px;
+        height: 80px;
+        top: 10%;
+        right: 5%;
+      }
+    }
+
+    /* Floating Home Button */
+    .floating-home-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: linear-gradient(135deg, var(--uz-blue), var(--uz-green));
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 10px 25px rgba(30, 181, 58, 0.3);
+      z-index: 1000;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      animation: pulse 2s infinite;
+    }
+
+    .floating-home-btn:hover {
+      transform: translateY(-5px) scale(1.1);
+      box-shadow: 0 15px 35px rgba(30, 181, 58, 0.4);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- O'zbekiston Bayrog'i Chiziqlari -->
+<div class="flag-stripe stripe-1"></div>
+<div class="flag-stripe stripe-2"></div>
+<div class="flag-stripe stripe-3"></div>
+
+<!-- Hilol va Yulduzlar -->
+<div class="crescent"></div>
+<div class="star"></div>
+<div class="star"></div>
+<div class="star"></div>
+<div class="star"></div>
+<div class="star"></div>
+
+<div class="login-card">
+  <!-- Sarlavha -->
+  <div class="login-header">
+    <div class="logo-container">
+      <div class="flag-icon"></div>
+      <div class="logo-text">
+        <h1>O'ZBEKISTON</h1>
+        <p>Portfolio Boshqaruv Paneli</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Xabarlar -->
+  {% if messages %}
+    <div class="alert-container">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {% if message.tags == 'success' %}
+            <i class="bi bi-check-circle-fill"></i>
+          {% elif message.tags == 'error' %}
+            <i class="bi bi-x-circle-fill"></i>
+          {% elif message.tags == 'warning' %}
+            <i class="bi bi-exclamation-triangle-fill"></i>
+          {% else %}
+            <i class="bi bi-info-circle-fill"></i>
+          {% endif %}
+          <span>{{ message }}</span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Yopish"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Kirish Formasi -->
+  <form method="POST" action="{% url 'login' %}">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label class="form-label" for="username">
+        <i class="bi bi-person-fill"></i>
+        Foydalanuvchi nomi
+      </label>
+      <input type="text"
+             class="form-control"
+             name="username"
+             id="username"
+             placeholder="Foydalanuvchi nomingizni kiriting"
+             required
+             autocomplete="username">
+      <div class="input-icon">
+        <i class="bi bi-person"></i>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="password">
+        <i class="bi bi-lock-fill"></i>
+        Parol
+      </label>
+      <input type="password"
+             class="form-control"
+             name="password"
+             id="password"
+             placeholder="Parolingizni kiriting"
+             required
+             autocomplete="current-password">
+      <div class="input-icon">
+        <i class="bi bi-shield-lock"></i>
+      </div>
+      <button type="button" class="password-toggle" id="togglePassword" aria-label="Parolni ko'rsatish">
+        <i class="bi bi-eye" id="eyeIcon"></i>
+      </button>
+    </div>
+
+    <button type="submit" class="submit-btn" id="loginBtn">
+      <i class="bi bi-box-arrow-in-right"></i>
+      <span>Tizimga Kirish</span>
+    </button>
+
+    <!-- ASOSIY SAHIFAGA QAYTISH TUGMASI -->
+    <a href="{% url 'home' %}" class="home-btn">
+      <i class="bi bi-house-door-fill"></i>
+      Portfolio Sahifasiga Qaytish
+    </a>
+
+    <div class="uzbek-emblem">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="var(--uz-blue)">
+        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+      </svg>
+      <span>O'zbekiston Respublikasi</span>
+    </div>
+  </form>
+
+  <!-- Footer -->
+  <div class="login-footer">
+    <p>&copy; 2024 O'zbekiston Dasturchilari. Barcha huquqlar himoyalangan.</p>
+    <div class="footer-links">
+      <a href="{% url 'home' %}">
+        <i class="bi bi-house-door"></i>
+        Asosiy sahifa
+      </a>
+      <a href="#">
+        <i class="bi bi-question-circle"></i>
+        Yordam
+      </a>
+      <a href="#">
+        <i class="bi bi-telephone"></i>
+        Aloqa
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Home Button -->
+<a href="{% url 'home' %}" class="floating-home-btn">
+  <i class="bi bi-house-door"></i>
+</a>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Parol Ko'rish Tugmasi
+  const togglePassword = document.getElementById('togglePassword');
+  const passwordInput = document.getElementById('password');
+  const eyeIcon = document.getElementById('eyeIcon');
+
+  togglePassword.addEventListener('click', function() {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+
+    if (type === 'text') {
+      eyeIcon.className = 'bi bi-eye-slash';
+      this.style.backgroundColor = 'rgba(30, 181, 58, 0.1)';
+    } else {
+      eyeIcon.className = 'bi bi-eye';
+      this.style.backgroundColor = 'transparent';
+    }
+  });
+
+  // Forma Yuborish Animatsiyasi
+  const loginForm = document.querySelector('form');
+
+  loginForm.addEventListener('submit', function(e) {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    if (!username || !password) {
+      e.preventDefault();
+      // Silkitish animatsiyasi
+      loginForm.style.animation = 'shake 0.5s';
+      setTimeout(() => {
+        loginForm.style.animation = '';
+      }, 500);
+
+      // Bo'sh maydonlarni belgilash
+      if (!username) {
+        document.getElementById('username').style.borderColor = 'var(--uz-red)';
+      }
+      if (!password) {
+        document.getElementById('password').style.borderColor = 'var(--uz-red)';
+      }
+    }
+  });
+
+  // Xato belgisini olib tashlash
+  const inputs = document.querySelectorAll('.form-control');
+  inputs.forEach(input => {
+    input.addEventListener('focus', function() {
+      this.style.borderColor = 'var(--uz-green)';
+    });
+
+    input.addEventListener('input', function() {
+      if (this.value.trim()) {
+        this.style.borderColor = '#E8F5E9';
+      }
+    });
+  });
+
+  // Avtomatik fokus
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+      document.getElementById('username').focus();
+    }, 300);
+
+    // Yulduzlar qo'shish
+    for (let i = 0; i < 12; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 90 + '%';
+      star.style.top = Math.random() * 90 + '%';
+      star.style.opacity = 0.1 + Math.random() * 0.3;
+      star.style.width = (10 + Math.random() * 30) + 'px';
+      star.style.height = star.style.width;
+      star.style.animationDelay = Math.random() * 3 + 's';
+      document.body.appendChild(star);
+    }
+  });
+
+  // Silkitish animatsiyasi
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // O'zbekiston bayrog'ini bosganda animatsiya
+  const flagIcon = document.querySelector('.flag-icon');
+  flagIcon.addEventListener('click', function() {
+    this.style.transform = 'scale(1.1) rotate(5deg)';
+    setTimeout(() => {
+      this.style.transform = 'scale(1) rotate(0deg)';
+    }, 300);
+  });
+</script>
+
+</body>
+</html>

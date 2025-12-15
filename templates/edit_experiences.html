@@ -1,0 +1,326 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tajriba Boshqaruvi</title>
+
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .exp-item {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .exp-item:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .exp-work {
+            border-left: 4px solid #667eea;
+        }
+
+        .exp-education {
+            border-left: 4px solid #10b981;
+        }
+
+        .exp-certificate {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .type-badge {
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 20px;
+        }
+
+        .badge-work {
+            background: #667eea;
+            color: white;
+        }
+
+        .badge-education {
+            background: #10b981;
+            color: white;
+        }
+
+        .badge-certificate {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .action-buttons .btn {
+            margin: 2px;
+            font-size: 0.85rem;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="{% url 'admin_panel' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Admin Paneli
+            </a>
+            <h3 class="mb-0">
+                <i class="bi bi-briefcase me-2"></i>
+                Tajriba va Ta'lim Boshqaruvi
+            </h3>
+        </div>
+
+        <div class="admin-card">
+            {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Add/Edit Form -->
+            <div class="form-section">
+                <h4 class="mb-3">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Yangi Tajriba Qo'shish
+                </h4>
+                <form method="POST" id="expForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="experience_id" id="experience_id">
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Tajriba turi</label>
+                            {{ form.experience_type }}
+                        </div>
+
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Sarlavha</label>
+                            {{ form.title }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Kompaniya/Ta'lim muassasi</label>
+                            {{ form.company }}
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Boshlanish sanasi</label>
+                            {{ form.start_date }}
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Tugash sanasi</label>
+                            {{ form.end_date }}
+                            <div class="form-check mt-2">
+                                {{ form.current }}
+                                <label class="form-check-label">Hozirgi ish</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Tavsif</label>
+                            {{ form.description }}
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Tartib raqami</label>
+                            {{ form.order }}
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Holat</label>
+                            <div class="form-check form-switch mt-2">
+                                {{ form.is_active }}
+                                <label class="form-check-label">Faol</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="d-flex gap-2">
+                                <button type="submit" name="add_experience" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-2"></i>
+                                    Qo'shish
+                                </button>
+                                <button type="submit" name="edit_experience" class="btn btn-success" style="display: none;">
+                                    <i class="bi bi-pencil me-2"></i>
+                                    Yangilash
+                                </button>
+                                <button type="button" onclick="resetForm()" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle me-2"></i>
+                                    Bekor qilish
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Experiences List -->
+            <div class="mt-5">
+                <h4 class="mb-3">
+                    <i class="bi bi-list-check me-2"></i>
+                    Mavjud Tajribalar
+                </h4>
+
+                {% if experiences %}
+                <div class="row">
+                    {% for exp in experiences %}
+                    <div class="col-md-6 mb-3">
+                        <div class="exp-item exp-{{ exp.experience_type }}">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h5 class="mb-1">{{ exp.title }}</h5>
+                                    <span class="type-badge badge-{{ exp.experience_type }}">
+                                        {{ exp.get_experience_type_display }}
+                                    </span>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox"
+                                           {% if exp.is_active %}checked{% endif %}
+                                           onchange="toggleActive({{ exp.id }}, this.checked)">
+                                </div>
+                            </div>
+
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-building me-1"></i>
+                                {{ exp.company|default:"-" }}
+                            </p>
+
+                            <p class="mb-2">
+                                <i class="bi bi-calendar me-1"></i>
+                                {{ exp.start_date|date:"M Y" }} -
+                                {% if exp.current %}
+                                Hozirgacha
+                                {% elif exp.end_date %}
+                                {{ exp.end_date|date:"M Y" }}
+                                {% else %}
+                                Hozirgacha
+                                {% endif %}
+                            </p>
+
+                            <p class="small text-muted mb-3">
+                                {{ exp.description|truncatechars:100 }}
+                            </p>
+
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-warning"
+                                        onclick="editExperience({{ exp.id }})">
+                                    <i class="bi bi-pencil"></i> Tahrirlash
+                                </button>
+
+                                <form method="POST" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="experience_id" value="{{ exp.id }}">
+                                    <button type="submit" name="delete_experience"
+                                            class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Rostan ham o\'chirmoqchimisiz?')">
+                                        <i class="bi bi-trash"></i> O'chirish
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-briefcase display-1 text-muted"></i>
+                    <p class="mt-3 text-muted">Hali tajriba qo'shilmagan</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+        function editExperience(id) {
+            fetch(`/api/experience/${id}/`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('experience_id').value = data.id;
+                    document.getElementById('id_experience_type').value = data.experience_type;
+                    document.getElementById('id_title').value = data.title;
+                    document.getElementById('id_company').value = data.company;
+                    document.getElementById('id_start_date').value = data.start_date;
+                    document.getElementById('id_end_date').value = data.end_date || '';
+                    document.getElementById('id_current').checked = data.current;
+                    document.getElementById('id_description').value = data.description;
+                    document.getElementById('id_order').value = data.order;
+                    document.getElementById('id_is_active').checked = data.is_active;
+
+                    // Show edit button, hide add button
+                    document.querySelector('button[name="edit_experience"]').style.display = 'inline-block';
+                    document.querySelector('button[name="add_experience"]').style.display = 'none';
+
+                    // Scroll to form
+                    document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+                });
+        }
+
+        function resetForm() {
+            document.getElementById('expForm').reset();
+            document.getElementById('experience_id').value = '';
+            document.querySelector('button[name="edit_experience"]').style.display = 'none';
+            document.querySelector('button[name="add_experience"]').style.display = 'inline-block';
+        }
+
+        function toggleActive(id, isActive) {
+            fetch(`/api/experience/${id}/toggle/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ is_active: isActive })
+            });
+        }
+
+        // Set today as default for start date
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            if (!document.getElementById('id_start_date').value) {
+                document.getElementById('id_start_date').value = today;
+            }
+
+            // Auto-hide end date if current is checked
+            document.getElementById('id_current').addEventListener('change', function() {
+                document.getElementById('id_end_date').disabled = this.checked;
+                if (this.checked) {
+                    document.getElementById('id_end_date').value = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

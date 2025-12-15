@@ -1,0 +1,198 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontakt Ma'lumotlari</title>
+
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .map-preview {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 10px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+        }
+
+        .map-preview iframe {
+            width: 100%;
+            height: 200px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'admin_panel' %}" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Admin Paneli
+        </a>
+
+        <div class="admin-card">
+            <h2 class="mb-4">
+                <i class="bi bi-telephone me-2"></i>
+                Kontakt Ma'lumotlarini Tahrirlash
+            </h2>
+
+            {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Manzil</label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                        <div class="text-danger small">{{ form.address.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Telefon</label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                        <div class="text-danger small">{{ form.phone.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Email</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div class="text-danger small">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Holat</label>
+                        <div class="form-check form-switch mt-2">
+                            {{ form.is_active }}
+                            <label class="form-check-label">
+                                {% if contact_info.is_active %}
+                                <span class="text-success">Faol</span>
+                                {% else %}
+                                <span class="text-danger">Nofaol</span>
+                                {% endif %}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Google Maps Embed Kodi</label>
+                        {{ form.map_embed_code }}
+                        <small class="text-muted">
+                            Google Maps dan olingan iframe kodini joylang. Masalan:<br>
+                            &lt;iframe src="https://www.google.com/maps/embed?pb=..."&gt;&lt;/iframe&gt;
+                        </small>
+                        {% if form.map_embed_code.errors %}
+                        <div class="text-danger small">{{ form.map_embed_code.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Map preview -->
+                    <div class="col-12 mb-4">
+                        <label class="form-label">Xarita Ko'rinishi:</label>
+                        <div class="map-preview">
+                            {% if contact_info.map_embed_code %}
+                                {{ contact_info.map_embed_code|safe }}
+                            {% else %}
+                                <div class="text-center">
+                                    <i class="bi bi-map display-4 text-muted mb-3"></i>
+                                    <p>Xarita ko'rsatilmagan</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit" class="submit-btn">
+                            <i class="bi bi-save me-2"></i>
+                            Saqlash
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+        // Automatically update map preview
+        document.getElementById('id_map_embed_code').addEventListener('input', function(e) {
+            const preview = document.querySelector('.map-preview');
+            preview.innerHTML = this.value || '<div class="text-center"><i class="bi bi-map display-4 text-muted mb-3"></i><p>Xarita ko\'rsatilmagan</p></div>';
+        });
+    </script>
+</body>
+</html>
