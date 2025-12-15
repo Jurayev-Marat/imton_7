@@ -2,9 +2,8 @@ from django import forms
 from .models import *
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from captcha.fields import ReCaptchaField
-from captcha.widgets import ReCaptchaV2Checkbox
-
+from django_recaptcha.fields import ReCaptchaField
+from django_recaptcha.widgets import ReCaptchaV2Checkbox
 
 class UserLoginForm(AuthenticationForm):
     username = forms.CharField(label='Login', widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -28,7 +27,7 @@ class ContactForm(forms.ModelForm):
 
     class Meta:
         model = ContactMessage
-        fields = ['name', 'email', 'subject', 'message']
+        fields = ['name', 'email', 'subject', 'message', 'captcha']
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-control',

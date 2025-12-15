@@ -1,3 +1,4 @@
+# configapp/models.py
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -28,8 +29,10 @@ class Profile(models.Model):
 
     hero_background = models.ImageField(upload_to='hero/', blank=True, null=True, verbose_name="Hero fon rasm")
     hero_title = models.CharField(max_length=100, blank=True, verbose_name="Hero sarlavha")
-    hero_subtitles = models.TextField(help_text="Herotda ko'rinadigan kasblar. Har birini vergul bilan ajrating",
-                                      verbose_name="Hero kasblar")
+    hero_subtitles = models.TextField(
+        help_text="Herotda ko'rinadigan kasblar. Har birini vergul bilan ajrating",
+        verbose_name="Hero kasblar"
+    )
 
     is_active = models.BooleanField(default=True, verbose_name="Faol")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Yaratilgan sana")
@@ -52,7 +55,8 @@ class Profile(models.Model):
         if self.birth_date:
             today = timezone.now().date()
             age = today.year - self.birth_date.year - (
-                        (today.month, today.day) < (self.birth_date.month, self.birth_date.day))
+                (today.month, today.day) < (self.birth_date.month, self.birth_date.day)
+            )
             self.age = age
         super().save(*args, **kwargs)
 
@@ -70,8 +74,12 @@ class Skill(models.Model):
         validators=[MinValueValidator(0), MaxValueValidator(100)],
         verbose_name="Foiz"
     )
-    category = models.CharField(max_length=50, default='technical',
-                                choices=SKILL_CATEGORIES, verbose_name="Kategoriya")
+    category = models.CharField(
+        max_length=50,
+        default='technical',
+        choices=SKILL_CATEGORIES,
+        verbose_name="Kategoriya"
+    )
     order = models.IntegerField(default=0, verbose_name="Tartibi")
     is_active = models.BooleanField(default=True, verbose_name="Faol")
 
@@ -85,9 +93,11 @@ class Skill(models.Model):
 
 
 class Service(models.Model):
-    icon_class = models.CharField(max_length=50,
-                                  help_text="Bootstrap icon class. Masalan: bi bi-briefcase",
-                                  verbose_name="Icon class")
+    icon_class = models.CharField(
+        max_length=50,
+        help_text="Bootstrap icon class. Masalan: bi bi-briefcase",
+        verbose_name="Icon class"
+    )
     title = models.CharField(max_length=200, verbose_name="Sarlavha")
     description = models.TextField(verbose_name="Tavsif")
     order = models.IntegerField(default=0, verbose_name="Tartibi")
@@ -104,9 +114,11 @@ class Service(models.Model):
 
 class PortfolioCategory(models.Model):
     name = models.CharField(max_length=100, verbose_name="Nomi")
-    filter_name = models.CharField(max_length=50,
-                                   help_text="Isotope filter uchun class nomi",
-                                   verbose_name="Filter nomi")
+    filter_name = models.CharField(
+        max_length=50,
+        help_text="Isotope filter uchun class nomi",
+        verbose_name="Filter nomi"
+    )
     order = models.IntegerField(default=0, verbose_name="Tartibi")
     is_active = models.BooleanField(default=True, verbose_name="Faol")
 
@@ -120,13 +132,21 @@ class PortfolioCategory(models.Model):
 
 
 class PortfolioItem(models.Model):
-    category = models.ForeignKey(PortfolioCategory, on_delete=models.CASCADE,
-                                 related_name='items', verbose_name="Kategoriya")
+    category = models.ForeignKey(
+        PortfolioCategory,
+        on_delete=models.CASCADE,
+        related_name='items',
+        verbose_name="Kategoriya"
+    )
     title = models.CharField(max_length=200, verbose_name="Sarlavha")
     short_description = models.CharField(max_length=200, verbose_name="Qisqacha tavsif")
     detailed_description = models.TextField(blank=True, verbose_name="Batafsil tavsif")
-    image = models.ImageField(upload_to='portfolio/', blank=True, null=True,
-                              verbose_name="Rasm")
+    image = models.ImageField(
+        upload_to='portfolio/',
+        blank=True,
+        null=True,
+        verbose_name="Rasm"
+    )
     date_created = models.DateField(default=timezone.now, verbose_name="Yaratilgan sana")
     order = models.IntegerField(default=0, verbose_name="Tartibi")
     is_featured = models.BooleanField(default=False, verbose_name="Tavsiya etilgan")
@@ -134,9 +154,12 @@ class PortfolioItem(models.Model):
 
     github_link = models.URLField(blank=True, verbose_name="GitHub Repository Link")
     live_demo_link = models.URLField(blank=True, verbose_name="Live Demo Link")
-    technologies_used = models.CharField(max_length=300, blank=True,
-                                         help_text="Foydalanilgan texnologiyalar (vergul bilan ajratilgan)",
-                                         verbose_name="Foydalanilgan texnologiyalar")
+    technologies_used = models.CharField(
+        max_length=300,
+        blank=True,
+        help_text="Foydalanilgan texnologiyalar (vergul bilan ajratilgan)",
+        verbose_name="Foydalanilgan texnologiyalar"
+    )
 
     class Meta:
         verbose_name = "Portfolio Loyiha"
@@ -161,10 +184,17 @@ class Experience(models.Model):
         ('certificate', 'Sertifikatlar'),
     ]
 
-    experience_type = models.CharField(max_length=20, choices=EXPERIENCE_TYPE,
-                                       verbose_name="Tajriba turi")
+    experience_type = models.CharField(
+        max_length=20,
+        choices=EXPERIENCE_TYPE,
+        verbose_name="Tajriba turi"
+    )
     title = models.CharField(max_length=200, verbose_name="Sarlavha")
-    company = models.CharField(max_length=200, blank=True, verbose_name="Kompaniya/Ta'lim muassasi")
+    company = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name="Kompaniya/Ta'lim muassasi"
+    )
     start_date = models.DateField(verbose_name="Boshlanish sanasi")
     end_date = models.DateField(null=True, blank=True, verbose_name="Tugash sanasi")
     current = models.BooleanField(default=False, verbose_name="Hozirgi ish")
@@ -185,8 +215,10 @@ class ContactInfo(models.Model):
     address = models.TextField(verbose_name="Manzil")
     phone = models.CharField(max_length=20, verbose_name="Telefon")
     email = models.EmailField(verbose_name="Email")
-    map_embed_code = models.TextField(help_text="Google Maps embed kodi",
-                                      verbose_name="Xarita kodi")
+    map_embed_code = models.TextField(
+        help_text="Google Maps embed kodi",
+        verbose_name="Xarita kodi"
+    )
     is_active = models.BooleanField(default=True, verbose_name="Faol")
 
     class Meta:
@@ -224,8 +256,12 @@ class ContactMessage(models.Model):
     message = models.TextField(verbose_name="Xabar")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Yaratilgan sana")
     is_read = models.BooleanField(default=False, verbose_name="O'qilgan")
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new',
-                              verbose_name="Status")
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='new',
+        verbose_name="Status"
+    )
 
     class Meta:
         verbose_name = "Kontakt Xabari"
@@ -241,10 +277,17 @@ class Testimonial(models.Model):
     position = models.CharField(max_length=200, verbose_name="Lavozim")
     company = models.CharField(max_length=200, verbose_name="Kompaniya")
     content = models.TextField(verbose_name="Fikr")
-    image = models.ImageField(upload_to='testimonials/', blank=True, null=True,
-                              verbose_name="Rasm")
-    rating = models.IntegerField(default=5, validators=[MinValueValidator(1), MaxValueValidator(5)],
-                                 verbose_name="Reyting")
+    image = models.ImageField(
+        upload_to='testimonials/',
+        blank=True,
+        null=True,
+        verbose_name="Rasm"
+    )
+    rating = models.IntegerField(
+        default=5,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        verbose_name="Reyting"
+    )
     is_active = models.BooleanField(default=True, verbose_name="Faol")
     order = models.IntegerField(default=0, verbose_name="Tartibi")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Yaratilgan sana")
@@ -268,13 +311,19 @@ class Project(models.Model):
     title = models.CharField(max_length=200, verbose_name="Loyiha nomi")
     slug = models.SlugField(max_length=200, unique=True, verbose_name="Slug")
     description = models.TextField(verbose_name="Tavsif")
-    project_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='personal',
-                                    verbose_name="Loyiha turi")
+    project_type = models.CharField(
+        max_length=20,
+        choices=TYPE_CHOICES,
+        default='personal',
+        verbose_name="Loyiha turi"
+    )
     client_name = models.CharField(max_length=200, blank=True, verbose_name="Mijoz nomi")
     start_date = models.DateField(verbose_name="Boshlanish sanasi")
     end_date = models.DateField(blank=True, null=True, verbose_name="Tugash sanasi")
-    technologies = models.TextField(help_text="Foydalanilgan texnologiyalar (vergul bilan ajratilgan)",
-                                    verbose_name="Texnologiyalar")
+    technologies = models.TextField(
+        help_text="Foydalanilgan texnologiyalar (vergul bilan ajratilgan)",
+        verbose_name="Texnologiyalar"
+    )
     github_link = models.URLField(blank=True, verbose_name="GitHub Link")
     live_link = models.URLField(blank=True, verbose_name="Live Link")
     featured_image = models.ImageField(upload_to='projects/', verbose_name="Asosiy rasm")
@@ -333,8 +382,12 @@ class Certificate(models.Model):
     expiration_date = models.DateField(blank=True, null=True, verbose_name="Muddati")
     credential_id = models.CharField(max_length=100, blank=True, verbose_name="Sertifikat ID")
     credential_url = models.URLField(blank=True, verbose_name="Sertifikat linki")
-    image = models.ImageField(upload_to='certificates/', blank=True, null=True,
-                              verbose_name="Sertifikat rasmi")
+    image = models.ImageField(
+        upload_to='certificates/',
+        blank=True,
+        null=True,
+        verbose_name="Sertifikat rasmi"
+    )
     order = models.IntegerField(default=0, verbose_name="Tartibi")
     is_active = models.BooleanField(default=True, verbose_name="Faol")
 
@@ -350,28 +403,33 @@ class Certificate(models.Model):
 class SocialLink(models.Model):
     PLATFORM_CHOICES = [
         ('github', 'GitHub'),
-        ('telegram', 'Telegram'),
-        ('instagram', 'Instagram'),
         ('linkedin', 'LinkedIn'),
         ('twitter', 'Twitter'),
         ('facebook', 'Facebook'),
+        ('instagram', 'Instagram'),
+        ('telegram', 'Telegram'),
         ('youtube', 'YouTube'),
         ('whatsapp', 'WhatsApp'),
         ('skype', 'Skype'),
-        ('stackoverflow', 'Stack Overflow'),
+        ('discord', 'Discord'),
         ('medium', 'Medium'),
-        ('behance', 'Behance'),
-        ('dribbble', 'Dribbble'),
-        ('codepen', 'CodePen'),
+        ('stackoverflow', 'Stack Overflow'),
         ('leetcode', 'LeetCode'),
         ('hackerrank', 'HackerRank'),
+        ('behance', 'Behance'),
+        ('dribbble', 'Dribbble'),
+        ('pinterest', 'Pinterest'),
+        ('reddit', 'Reddit'),
     ]
 
     platform = models.CharField(max_length=20, choices=PLATFORM_CHOICES, verbose_name="Platforma")
     url = models.URLField(verbose_name="Link")
-    icon_class = models.CharField(max_length=50, blank=True,
-                                  help_text="Bootstrap icon class. Masalan: bi bi-github",
-                                  verbose_name="Icon class")
+    icon_class = models.CharField(
+        max_length=50,
+        blank=True,
+        help_text="Bootstrap icon class. Masalan: bi bi-github",
+        verbose_name="Icon class"
+    )
     order = models.IntegerField(default=0, verbose_name="Tartibi")
     is_active = models.BooleanField(default=True, verbose_name="Faol")
 
